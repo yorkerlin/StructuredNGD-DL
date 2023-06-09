@@ -1,4 +1,3 @@
-'''Train CIFAR10/CIFAR100 with PyTorch.'''
 import argparse
 import time
 import ipdb
@@ -173,7 +172,6 @@ def train(epoch):
 
         outputs = net(inputs)
         loss = criterion(outputs, targets)
-        # print(inputs.shape, outputs.shape)
         if optim_name in ['kfac', 'local'] and optimizer.steps % optimizer.TCov == 0:
             optimizer.acc_stats = True
             ################
@@ -189,7 +187,6 @@ def train(epoch):
             ################
 
             # compute emprical fisher
-            # loss.backward(retain_graph=True)
             loss.backward()
             optimizer.acc_stats = False
             ################
