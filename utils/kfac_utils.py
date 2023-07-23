@@ -123,16 +123,19 @@ class ComputeCovA:
     @staticmethod
     def linear(a, layer):
         # a: batch_size * in_dim
-        # b = a.view(-1, a.size(-1)) #new try
-        b = a.reshape(-1, a.size(-1)) #new try
+        # b = a.view(-1, a.size(-1))
+        b = a.reshape(-1, a.size(-1))
         batch_size = a.size(0)
-        if layer.bias is not None:
-            # a = torch.cat([a, a.new(a.size(0), 1).fill_(1)], 1) #old
-            shape = list(b.shape[:-1]) + [1] #new try
-            b = torch.cat([b, b.new_ones(shape)], dim=-1)#new try
+        if a.ndim == 2:
+            if layer.bias is not None:
+                # a = torch.cat([a, a.new(a.size(0), 1).fill_(1)], 1) #old
+                shape = list(b.shape[:-1]) + [1] #new
+                b = torch.cat([b, b.new_ones(shape)], dim=-1)#new
+        else:
+            raise NotImplementedError
 
         # return a.t() @ (a / batch_size)#old
-        return b.t() @ (b / batch_size) #new try
+        return b.t() @ (b / batch_size) #new
 
 
 class ComputeCovG:
@@ -182,13 +185,16 @@ class ComputeCovG:
     def linear(g, layer, batch_averaged):
         # g: batch_size * out_dim
         batch_size = g.size(0)
-
-        g = g.reshape(-1, g.size(-1)) #new try
+        if g.ndim == 2:
+            g = g.reshape(-1, g.size(-1))
+        else:
+            raise NotImplementedError
 
         if batch_averaged:
             cov_g = g.t() @ (g * batch_size)
         else:
             cov_g = g.t() @ (g / batch_size)
+
         return cov_g #we assume batch_averaged
 
 
