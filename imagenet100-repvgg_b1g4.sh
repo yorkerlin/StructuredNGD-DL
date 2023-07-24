@@ -2,9 +2,9 @@ source  /scratch-ssd/wlin/mambaforge/etc/profile.d/conda.sh
 conda activate pytorch-new
 
 batch_size="128"
-update_freq=60
+update_freq=60 #only for KFAC and Our method (local)
 run_id=000
-damping=0.0005
+damping=0.0005 #only for KFAC and Our method (local)
 data_name="imagenet100"
 model_name="repvgg_b1g4"
 
