@@ -1,12 +1,8 @@
 import math
-import numpy as np
-import ipdb
-
 import torch
 import torch.optim as optim
 
 from utils.kfac_utils import (ComputeCovA, ComputeCovG)
-from utils.kfac_utils import update_running_stat
 
 
 
@@ -114,18 +110,18 @@ class LocalOptimizer(optim.Optimizer):
     def _update_helper(delta, block):#for cov
         #compute block * h(delta)
 
-        #2nd truncation
+        #2nd-order truncation for the expm
         #delta is symmetric
         #block @ h(delta)  = block @ ( I + (I+delta) @ (I+delta).t() )/2 
         # tmp = torch.eye(block.shape[0], device='cuda') + delta
         # return block @ (  (torch.eye(block.shape[0], device='cuda') + tmp @ tmp.t())/2.0 )
 
-        #1st truncation
+        #1st-order truncation for the expm
         tmp = block @  delta
         return block + tmp
 
 
-    def _update_local(self, m):#check it !!!
+    def _update_local(self, m):
         """our inverse FIM approximation
         :param m: The layer
         :return: no returns.
@@ -166,12 +162,12 @@ class LocalOptimizer(optim.Optimizer):
         #update A #p by p matrix
         self.m_A[m].mul_(beta2).add_(  ( ng_a+ng_a.t() )/2.0  ) 
         # self.A[m] = self._update_helper(-lr1*(self.m_A[m]), self.A[m])#for cov (must be negative)
-        self.A[m].add_((self.A[m] @ self.m_A[m]), alpha=-lr1)
+        self.A[m].add_((self.A[m] @ self.m_A[m]), alpha=-lr1) #1st-order truncation for the expm
 
         #update B #d by d matrix
         self.m_B[m].mul_(beta2).add_( ( ng_b+ng_b.t() )/2.0 ) 
         # self.B[m] = self._update_helper(-lr1*(self.m_B[m]), self.B[m])#for cov (must be negative)
-        self.B[m].add_((self.B[m] @ self.m_B[m]), alpha=-lr1)
+        self.B[m].add_((self.B[m] @ self.m_B[m]), alpha=-lr1) #1st-order truncation for the expm
 
         if self.faster:
             self.aa[m] = self.A[m] @ (self.A[m].t())

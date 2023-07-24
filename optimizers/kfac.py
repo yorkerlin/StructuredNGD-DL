@@ -1,6 +1,4 @@
 import math
-import ipdb
-
 import torch
 import torch.optim as optim
 
@@ -61,8 +59,6 @@ class KFACOptimizer(optim.Optimizer):
     def _save_input(self, module, input):
         if torch.is_grad_enabled() and self.steps % self.TCov == 0:
             aa = self.CovAHandler(input[0].data, module)
-            # if torch.isnan(aa).any():
-                # print('NaN error')
             # Initialize buffers
             if self.steps == 0:
                 self.m_aa[module] = torch.diag(aa.new(aa.size(0)).fill_(1))
@@ -73,8 +69,6 @@ class KFACOptimizer(optim.Optimizer):
         # Accumulate statistics for Fisher matrices
         if self.acc_stats and self.steps % self.TCov == 0:
             gg = self.CovGHandler(grad_output[0].data, module, self.batch_averaged)
-            # if torch.isnan(gg).any():
-                # print('NaN error')
             # Initialize buffers
             if self.steps == 0:
                 self.m_gg[module] = torch.diag(gg.new(gg.size(0)).fill_(1))
@@ -230,5 +224,5 @@ class KFACOptimizer(optim.Optimizer):
             p_grad_mat = self._get_matrix_form_grad(m, classname)#reshape the Euclidean grad as a matrix
             self._update_natural_grad(m, p_grad_mat, damping)
 
-        self._step(closure) #do riemannian norm and update
+        self._step(closure) #do the update
         self.steps += 1
