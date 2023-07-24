@@ -8,6 +8,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.optim.lr_scheduler import MultiStepLR
 import joblib
+from lion_pytorch import Lion
 
 from tqdm import tqdm
 from utils.network_utils import get_network
