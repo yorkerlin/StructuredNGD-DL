@@ -81,11 +81,6 @@ if optim_name == 'sgd':
                           lr=args.learning_rate,
                           momentum=args.momentum,
                           weight_decay=args.weight_decay)
-elif optim_name == 'sgd_nol2':
-    optimizer = optim.SGD(net.parameters(),
-                          lr=args.learning_rate,
-                          momentum=args.momentum,
-                          )
 elif optim_name == 'kfac':
     optimizer = KFACOptimizer(net,
                               lr=args.learning_rate,
@@ -106,10 +101,6 @@ elif optim_name == 'adam':
                           lr=args.learning_rate,
                           weight_decay=args.weight_decay)
 
-elif optim_name == 'adam_nol2':
-    optimizer = optim.Adam(net.parameters(),
-                          lr=args.learning_rate,
-                          )
 elif optim_name == 'local':
     optimizer = LocalOptimizer(net,
                               lr=args.learning_rate,
@@ -121,6 +112,12 @@ elif optim_name == 'local':
                               TCov=args.TCov,
                               lr_cov=args.lr_cov,
                               TInv=args.TInv)
+elif optim_name == 'lion':
+    optimizer = Lion(net.parameters(),
+                     lr=args.learning_rate,
+                     weight_decay=args.weight_decay)
+
+
 
 else:
     raise NotImplementedError
