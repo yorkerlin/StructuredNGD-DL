@@ -1,4 +1,4 @@
-source  /scratch-ssd/wlin/mambaforge/etc/profile.d/conda.sh
+#source  /scratch-ssd/wlin/mambaforge/etc/profile.d/conda.sh
 conda activate pytorch-new
 
 batch_size="128"
