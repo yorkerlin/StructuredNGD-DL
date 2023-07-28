@@ -7,7 +7,7 @@ run_id=000
 damping=0.005   #only for KFAC and Our method (local)
 data_name="imagenet100"
 model_name="convmixer_180_16"
-
+#the "faster" option is only for our method
 
 lr=0.004
 opt_name="local"
